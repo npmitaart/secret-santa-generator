@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Secret Santa</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Admin Panel</h1>
+      <p>Generate pairs and passwords for your Secret Santa!</p>
+    </header>
+    <textarea id="names" placeholder="Enter participant names (one per line)" rows="10"></textarea>
+    <button id="generate">Generate Passwords</button>
+    <div id="output"></div>
+    <footer>
+      Made with ❤️ by Giodio Mitaart
+    </footer>
+  </div>
+  <div class="festive-animation"></div>
+  <script>
+    document.getElementById('generate').addEventListener('click', () => {
+      const names = document.getElementById('names').value.split('\n').map(name => name.trim()).filter(Boolean);
+
+      fetch('http://localhost:3000/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ names })
+      })
+      .then(response => response.json())
+      .then(data => {
+        const output = Object.entries(data).map(([name, { password }]) => `<p>${name}: ${password}</p>`).join('');
+        document.getElementById('output').innerHTML = `<h3>Passwords:</h3> ${output}`;
+      })
+      .catch(err => {
+        alert('Error generating pairs.');
+        console.error(err);
+      });
+    });
+  </script>
+</body>
+</html>

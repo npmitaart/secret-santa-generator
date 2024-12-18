@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secret Santa - Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Secret Santa</h1>
+      <p>Log in to see who you'll gift this year!</p>
+    </header>
+    <input type="text" id="name" placeholder="Your Name" />
+    <input type="password" id="password" placeholder="Password" />
+    <button id="login">Login</button>
+    <div id="assigned"></div>
+    <footer>
+      Made with ❤️ by Giodio Mitaart
+    </footer>
+  </div>
+  <div class="festive-animation"></div>
+  <script>
+    document.getElementById('login').addEventListener('click', () => {
+      const name = document.getElementById('name').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      fetch('http://localhost:3000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, password })
+      })
+      .then(response => {
+        if (!response.ok) throw new Error('Invalid name or password');
+        return response.json();
+      })
+      .then(data => {
+        document.getElementById('assigned').innerHTML = `<p class="pair-output">🎁 You need to buy a gift for: <strong>${data.assigned}</strong></p>`;
+      })
+      .catch(err => {
+        document.getElementById('assigned').innerText = 'Invalid name or password';
+        console.error(err);
+      });
+    });
+  </script>
+</body>
+</html>
